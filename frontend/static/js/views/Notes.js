@@ -35,7 +35,7 @@ export default class extends AbstractView {
             <td>
               <div class="buttons">
                 <button class="editButton">
-                  <img src=${editIconPath}/>
+                  <img id="editNote" data-index="${index}" src=${editIconPath}/>
                 </button>
                 <button class="editButton">
                   <img id="archiveNote" data-index="${index}" src=${archiveIconPath}/>

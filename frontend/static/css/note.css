@@ -1,0 +1,30 @@
+.main {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.inputBox {
+  display: flex;
+  margin: 10px 0px;
+}
+
+.inputText {
+  width: 100px;
+}
+
+input, textarea {
+  width: 200px;
+}
+
+select {
+  width: 208px;
+  padding: 2px;
+}
+
+.save {
+  width: 300px;
+  margin-top: 20px;
+  align-self: center;
+}

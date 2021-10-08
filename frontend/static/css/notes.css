@@ -1,0 +1,84 @@
+#app {
+  margin: 1em 2em;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+table {
+  width: 100%;
+  border-spacing: 0px 10px;
+}
+
+th {
+  text-align: left;
+  color: white;
+  font-weight: bolder;
+  padding: 0.8rem;
+}
+
+thead tr {
+  background-color: grey;
+}
+
+tbody tr {
+  color: #575757;
+  background-color: #E8F1FF;
+}
+
+.name {
+ color:#3A3A3A;
+ font-weight: bold; 
+}
+
+td {
+  padding: 10px;
+}
+
+tr th:first-child {
+  width: 65px;
+}
+
+.itemIcon {
+  padding: 10px;
+  border-radius: 50%;
+  filter: invert(100%);
+  background-color: grey;
+}
+
+.headerIcons {
+  display: flex;
+  justify-content: right;
+  filter:invert(100%);
+}
+
+.buttons {
+  display: flex;
+  justify-content: right;
+  filter: contrast(0.1);
+}
+
+.editButton {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.editIcon {
+  margin: 0px 5px;
+}
+
+.buttonsBox {
+  align-self: flex-end;
+  margin-bottom: 50px;
+}
+
+.button {
+  width: 150px;
+  height: 25px;
+}
+
+a {
+  text-decoration: none;
+  color:black;
+}

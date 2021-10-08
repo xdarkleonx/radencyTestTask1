@@ -13,7 +13,7 @@ const getParams = match => {
   return Object.fromEntries(keys.map((key, i) => {
     return [key, values[i]];
   }));
-};
+}
 
 const router = async () => {
   const routes = [
@@ -42,7 +42,7 @@ const router = async () => {
   const view = new match.route.view(getParams(match));
 
   document.querySelector("#app").innerHTML = await view.getHtml();
-};
+}
 
 var localData = JSON.parse(localStorage.getItem("data"));
 
@@ -54,7 +54,7 @@ window.addEventListener("popstate", router);
 
 document.addEventListener("DOMContentLoaded", () => {
   router();
-});
+})
 
 window.onload = () => {
   document.body.addEventListener("click", e => {
@@ -77,7 +77,7 @@ window.onload = () => {
       const newData = localData.map((item, i) => ({
         ...item,
         archived: i === index ? true : item.archived
-      }));
+      }))
       localStorage.setItem("data", JSON.stringify(newData));
       window.location.reload();
     }
@@ -87,7 +87,7 @@ window.onload = () => {
       const newData = localData.map((item) => ({
         ...item,
         archived: item.created === created ? false : item.archived
-      }));
+      }))
       localStorage.setItem("data", JSON.stringify(newData));
       window.location.reload();
     }
@@ -119,17 +119,36 @@ window.onload = () => {
     ?.addEventListener('submit', (e) => {
       e.preventDefault();
 
-      const editedNote = {
-        name: e.target[0].value,
-        category: e.target[1].value,
-        content: e.target[2].value,
-        archived: false,
-        created: new Date()
-      }
       const index = parseInt(e.target.getAttribute('data-index'));
       const newData = localData.filter((_, i) => i !== index);
+      const changedDates = localData[index]?.dates || [];
+      const lastChangedTimestamp = new Date(changedDates?.[changedDates.length - 1]).setHours(0, 0, 0, 0);
+      const createdTimestamp = new Date(localData[index].created).setHours(0, 0, 0, 0);
+      const currentTimestamp = new Date(e.target[1].value).setHours(0, 0, 0, 0);
+      const createdDate = new Date(createdTimestamp);
+      const currentDate = new Date(currentTimestamp);
+
+      const editedNote = {
+        name: e.target[0].value,
+        category: e.target[2].value,
+        content: e.target[3].value,
+        archived: false,
+        created: createdDate
+      }
+
+      if (changedDates.length && lastChangedTimestamp !== currentTimestamp) {
+        editedNote.dates = [...changedDates, currentDate]
+      }
+      else if (lastChangedTimestamp === currentTimestamp) {
+        editedNote.dates = changedDates;
+      }
+      else if (createdTimestamp !== currentTimestamp) {
+        editedNote.dates = [createdDate, currentDate];
+      }
+
       newData.push(editedNote);
+      newData.sort((a, b) => new Date(a.created) - new Date(b.created));
       localStorage.setItem("data", JSON.stringify(newData));
       window.location.replace("/");
     })
-};
+}

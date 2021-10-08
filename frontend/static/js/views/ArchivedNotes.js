@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js";
-import { getIconPathByCategory, restoreIconPath, createdFormat, datesFormat } from "../utils.js";
+import { getCategoryIconPath, restoreIconPath, createdFormat, datesFormat } from "../utils.js";
 
 export default class extends AbstractView {
   constructor(params) {
@@ -23,7 +23,7 @@ export default class extends AbstractView {
           `<tr>
             <td>
               <div>
-                <img class="itemIcon" src=${getIconPathByCategory(item.category)}/>
+                <img class="itemIcon" src=${getCategoryIconPath(item.category)}/>
               </div>
             </td>
             <td class="name">${item.name}</td>
@@ -46,6 +46,7 @@ export default class extends AbstractView {
 
   async getHtml() {
     return `
+      <h1>Archived notes</h1>
       <table>
         <thead>
           <tr>

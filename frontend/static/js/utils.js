@@ -17,11 +17,11 @@ export const data = [
     name: "New Feature",
     created: new Date(2021, 4, 5),
     category: "Idea",
-    content: "Implement new ...",
+    content: "Implement new feature",
     archived: false,
     dates: [
+      new Date(2021, 4, 5),
       new Date(2021, 4, 3),
-      new Date(2021, 4, 5)
     ]
   },
   {
@@ -54,7 +54,7 @@ export const data = [
   },
 ]
 
-export const getIconPathByCategory = (category) => {
+export const getCategoryIconPath = (category) => {
   switch (category) {
     case "Task":
       return "https://img.icons8.com/external-kiranshastry-solid-kiranshastry/25/000000/external-shopping-cart-interface-kiranshastry-solid-kiranshastry.png";

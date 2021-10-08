@@ -1,5 +1,6 @@
 import AbstractView from "./AbstractView.js";
-import { getIconPathByCategory, editIconPath, archiveIconPath, deleteIconPath, createdFormat, datesFormat } from "../utils.js";
+import { getCategoryIconPath, editIconPath, archiveIconPath } from "../utils.js";
+import { deleteIconPath, createdFormat, datesFormat } from "../utils.js";
 
 export default class extends AbstractView {
   constructor(params) {
@@ -16,14 +17,14 @@ export default class extends AbstractView {
     return sortedData.reduce((result = '', item, index) => {
       if (!item.archived) {
         const dates = item.dates
-          ? item.dates?.map(date => new Date(date).toLocaleString('am-ET', datesFormat))
+          ? item.dates?.reverse().map(date => new Date(date).toLocaleString('am-ET', datesFormat))
           : [];
 
         return result += (
           `<tr>
             <td>
               <div>
-                <img class="itemIcon" src=${getIconPathByCategory(item.category)}/>
+                <img class="itemIcon" src=${getCategoryIconPath(item.category)}/>
               </div>
             </td>
             <td class="name">${item.name}</td>
@@ -34,7 +35,7 @@ export default class extends AbstractView {
             <td>
               <div class="buttons">
                 <button class="editButton">
-                  <img id="editNote" data-index="${index}" src=${editIconPath}/>
+                  <img src=${editIconPath}/>
                 </button>
                 <button class="editButton">
                   <img id="archiveNote" data-index="${index}" src=${archiveIconPath}/>
@@ -47,12 +48,8 @@ export default class extends AbstractView {
         </tr>`
         )
       }
+      return result;
     }, '')
-    // console.log(items.toString())
-    // return items
-    // .toString()
-    // .replaceAll('</tr>,<tr>', '</tr><tr>')
-    // .replaceAll('</tr>,<tr>', '</tr><tr>')
   }
 
   renderSummary = () => {
@@ -76,7 +73,7 @@ export default class extends AbstractView {
         `<tr>
             <td>
               <div>
-                <img class="itemIcon" src=${getIconPathByCategory(category)}/>
+                <img class="itemIcon" src=${getCategoryIconPath(category)}/>
               </div>
             </td>
             <td>${category}</td>

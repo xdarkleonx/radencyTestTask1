@@ -14,7 +14,6 @@ export default class extends AbstractView {
                     <div class="inputText">Name</div>
                     <input type="text" id="name">
                 </div>
-                /* add date field */
                 <div class="inputBox">
                     <div class="inputText">Category</div>
                     <select id="category">

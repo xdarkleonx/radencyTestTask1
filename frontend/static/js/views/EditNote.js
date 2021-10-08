@@ -5,11 +5,14 @@ export default class extends AbstractView {
         super(params);
         this.noteId = params.id;
         this.data = JSON.parse(localStorage.getItem("data"))[this.noteId];
-        // console.log(JSON.parse(localStorage.getItem("data")));
-        // console.log(this.noteId);
     }
 
     async getHtml() {
+        const changedDates = this.data?.dates;
+        const date = changedDates
+            ? changedDates[changedDates.length - 1]
+            : this.data.created;
+
         return `
             <div class="main">
               <form id="editNoteForm" data-index="${this.noteId}">
@@ -17,6 +20,10 @@ export default class extends AbstractView {
                 <div class="inputBox">
                     <div class="inputText">Name</div>
                     <input type="text" id="name" value="${this.data.name}">
+                </div>
+                <div class="inputBox">
+                    <div class="inputText">Date</div>
+                    <input type="date" id="date" value="${new Date(date).toLocaleDateString('fr-CA')}">
                 </div>
                 <div class="inputBox">
                     <div class="inputText">Category</div>

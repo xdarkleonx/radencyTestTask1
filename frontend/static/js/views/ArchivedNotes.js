@@ -1,5 +1,5 @@
 import AbstractView from "./AbstractView.js";
-import { getCategoryIconPath, restoreIconPath, createdFormat, datesFormat } from "../utils.js";
+import { getCategoryIconPath, restoreIconPath, createdFormat } from "../utils.js";
 
 export default class extends AbstractView {
   constructor(params) {
@@ -15,9 +15,7 @@ export default class extends AbstractView {
 
     return onlyArchived.reduce((result = '', item) => {
       if (item.archived) {
-        const dates = item.dates
-          ? item.dates?.map(date => new Date(date).toLocaleString('am-ET', datesFormat))
-          : [];
+        const dates = item.content.match(/\d{0,31}(\D)\d{0,12}\1\d{4}/g) || [];
 
         return result += (
           `<tr>
@@ -30,11 +28,11 @@ export default class extends AbstractView {
             <td>${new Date(item.created).toLocaleString('en-CA', createdFormat)}</td>
             <td>${item.category}</td>
             <td>${item.content}</td>
-            <td>${dates.toString().replace(/,/g, ', ')}</td>
+            <td>${dates.length > 1 ? dates.toString().replaceAll(/,/g, ', ') : dates}</td>
             <td>
               <div class="buttons">
-                <button class="editButton">
-                  <img id="unarchiveNote" data-created="${item.created}" src=${restoreIconPath}/>
+                <button class="editButton unarchiveNote">
+                  <img data-created="${item.created}" src=${restoreIconPath}/>
                 </button>
               </div>
             </td>

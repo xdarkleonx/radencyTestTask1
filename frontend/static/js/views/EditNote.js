@@ -1,19 +1,19 @@
 import AbstractView from "./AbstractView.js";
 
 export default class extends AbstractView {
-    constructor(params) {
-        super(params);
-        this.noteId = params.id;
-        this.data = JSON.parse(localStorage.getItem("data"))[this.noteId];
-    }
+  constructor(params) {
+    super(params);
+    this.noteId = params.id;
+    this.data = JSON.parse(localStorage.getItem("data"))[this.noteId];
+    this.checkIsSelected = this.checkIsSelected.bind(this);
+  }
 
-    async getHtml() {
-        const changedDates = this.data?.dates;
-        const date = changedDates
-            ? changedDates[changedDates.length - 1]
-            : this.data.created;
+  checkIsSelected = (option) => {
+    return this.data.category == option ? 'selected' : null;
+  }
 
-        return `
+  async getHtml() {
+    return `
             <div class="main">
               <form id="editNoteForm" data-index="${this.noteId}">
                 <h1>Edit note</h1>
@@ -22,15 +22,17 @@ export default class extends AbstractView {
                     <input type="text" id="name" value="${this.data.name}">
                 </div>
                 <div class="inputBox">
-                    <div class="inputText">Date</div>
-                    <input type="date" id="date" value="${new Date(date).toLocaleDateString('fr-CA')}">
-                </div>
-                <div class="inputBox">
                     <div class="inputText">Category</div>
                     <select id="category" value="${this.data.category}">
-                        <option>Task</option>
-                        <option>Random Thought</option>
-                        <option>Idea</option>
+                        <option ${this.checkIsSelected('Task')}>
+                          Task
+                        </option>
+                        <option ${this.checkIsSelected('Random Thought')}>
+                          Random Thought
+                        </option>
+                        <option ${this.checkIsSelected('Idea')}>
+                          Idea
+                        </option>
                     </select>
                 </div>
                 <div class="inputBox">
@@ -40,6 +42,6 @@ export default class extends AbstractView {
                 <button type="submit" class="save">Save note</button>
               </form>
             </div>
-        `;
-    }
+          `;
+  }
 }

@@ -2,18 +2,9 @@ import Notes from "./views/Notes.js";
 import ArchivedNotes from "./views/ArchivedNotes.js";
 import NewNote from "./views/NewNote.js";
 import EditNote from "./views/EditNote.js";
-import { data } from "./utils.js";
+import { pathToRegex, getParams, getInitData } from "./utils.js";
 
-const pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
-
-const getParams = match => {
-  const values = match.result.slice(1);
-  const keys = Array.from(match.route.path.matchAll(/:(\w+)/g)).map(result => result[1]);
-
-  return Object.fromEntries(keys.map((key, i) => {
-    return [key, values[i]];
-  }));
-}
+const initData = getInitData();
 
 const router = async () => {
   const routes = [
@@ -30,7 +21,8 @@ const router = async () => {
     }
   })
 
-  let match = potentialMatches.find(potentialMatch => potentialMatch.result !== null);
+  let match = potentialMatches
+    .find(potentialMatch => potentialMatch.result !== null);
 
   if (!match) {
     match = {
@@ -40,64 +32,67 @@ const router = async () => {
   }
 
   const view = new match.route.view(getParams(match));
-
   document.querySelector("#app").innerHTML = await view.getHtml();
 }
 
-var localData = JSON.parse(localStorage.getItem("data"));
-
-if (!localData) {
-  localStorage.setItem("data", JSON.stringify(data));
-}
-
+document.addEventListener("DOMContentLoaded", router);
 window.addEventListener("popstate", router);
 
-document.addEventListener("DOMContentLoaded", () => {
-  router();
-})
-
 window.onload = () => {
-  document.body.addEventListener("click", e => {
-    if (e.target.matches("#showArchive")) {
+  document.getElementById('showArchive')
+    ?.addEventListener("click", (e) => {
       e.preventDefault();
       window.location.assign("/archived");
-    }
-    if (e.target.matches("#createNote")) {
+    })
+
+  document.getElementById('createNote')
+    ?.addEventListener("click", (e) => {
       e.preventDefault();
       window.location.assign("/new");
-    }
-    if (e.target.matches("#editNote")) {
+    })
+
+  document.querySelectorAll('.editNote').forEach((button) => {
+    button.addEventListener("click", (e) => {
       e.preventDefault();
       const index = parseInt(e.target.getAttribute('data-index'));
       window.location.assign(`/edit/${index}`);
-    }
-    if (e.target.matches("#archiveNote")) {
+    })
+  })
+
+  document.querySelectorAll('.archiveNote').forEach((button) => {
+    button.addEventListener("click", (e) => {
       e.preventDefault();
       const index = parseInt(e.target.getAttribute('data-index'));
-      const newData = localData.map((item, i) => ({
+      const newData = initData.map((item, i) => ({
         ...item,
         archived: i === index ? true : item.archived
       }))
       localStorage.setItem("data", JSON.stringify(newData));
       window.location.reload();
-    }
-    if (e.target.matches("#unarchiveNote")) {
+    })
+  })
+
+  document.querySelectorAll('.unarchiveNote').forEach((button) => {
+    button.addEventListener("click", (e) => {
       e.preventDefault();
       const created = e.target.getAttribute('data-created');
-      const newData = localData.map((item) => ({
+      const newData = initData.map((item) => ({
         ...item,
         archived: item.created === created ? false : item.archived
       }))
       localStorage.setItem("data", JSON.stringify(newData));
       window.location.reload();
-    }
-    if (e.target.matches("#removeNote")) {
+    })
+  })
+
+  document.querySelectorAll('.removeNote').forEach((button) => {
+    button.addEventListener("click", (e) => {
       e.preventDefault();
       const index = parseInt(e.target.getAttribute('data-index'));
-      const newData = localData.filter((_, i) => i !== index);
+      const newData = initData.filter((_, i) => i !== index);
       localStorage.setItem("data", JSON.stringify(newData));
       window.location.reload();
-    }
+    })
   })
 
   document.getElementById("newNoteForm")
@@ -110,7 +105,7 @@ window.onload = () => {
         archived: false,
         created: new Date()
       }
-      const newData = [...localData, newNote];
+      const newData = [...initData, newNote];
       localStorage.setItem("data", JSON.stringify(newData));
       window.location.replace("/");
     })
@@ -120,30 +115,15 @@ window.onload = () => {
       e.preventDefault();
 
       const index = parseInt(e.target.getAttribute('data-index'));
-      const newData = localData.filter((_, i) => i !== index);
-      const changedDates = localData[index]?.dates || [];
-      const lastChangedTimestamp = new Date(changedDates?.[changedDates.length - 1]).setHours(0, 0, 0, 0);
-      const createdTimestamp = new Date(localData[index].created).setHours(0, 0, 0, 0);
-      const currentTimestamp = new Date(e.target[1].value).setHours(0, 0, 0, 0);
-      const createdDate = new Date(createdTimestamp);
-      const currentDate = new Date(currentTimestamp);
+      const newData = initData.filter((_, i) => i !== index);
+      const createdDate = new Date(initData[index].created);
 
       const editedNote = {
         name: e.target[0].value,
-        category: e.target[2].value,
-        content: e.target[3].value,
-        archived: false,
-        created: createdDate
-      }
-
-      if (changedDates.length && lastChangedTimestamp !== currentTimestamp) {
-        editedNote.dates = [...changedDates, currentDate]
-      }
-      else if (lastChangedTimestamp === currentTimestamp) {
-        editedNote.dates = changedDates;
-      }
-      else if (createdTimestamp !== currentTimestamp) {
-        editedNote.dates = [createdDate, currentDate];
+        category: e.target[1].value,
+        content: e.target[2].value,
+        created: createdDate,
+        archived: false
       }
 
       newData.push(editedNote);

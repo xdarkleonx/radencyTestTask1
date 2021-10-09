@@ -1,6 +1,6 @@
 import AbstractView from "./AbstractView.js";
 import { getCategoryIconPath, editIconPath, archiveIconPath } from "../utils.js";
-import { deleteIconPath, createdFormat, datesFormat } from "../utils.js";
+import { deleteIconPath, createdFormat } from "../utils.js";
 
 export default class extends AbstractView {
   constructor(params) {
@@ -16,10 +16,7 @@ export default class extends AbstractView {
 
     return sortedData.reduce((result = '', item, index) => {
       if (!item.archived) {
-        const dates = item.dates
-          ? item.dates?.reverse().map(date => new Date(date).toLocaleString('am-ET', datesFormat))
-          : [];
-
+        const dates = item.content.match(/\d{0,31}(\D)\d{0,12}\1\d{4}/g) || [];
         return result += (
           `<tr>
             <td>
@@ -31,17 +28,17 @@ export default class extends AbstractView {
             <td>${new Date(item.created).toLocaleString('en-CA', createdFormat)}</td>
             <td>${item.category}</td>
             <td>${item.content}</td>
-            <td>${dates.toString().replace(/,/g, ', ')}</td>
+            <td>${dates.length > 1 ? dates.toString().replaceAll(/,/g, ', ') : dates}</td>
             <td>
               <div class="buttons">
-                <button class="editButton">
-                  <img src=${editIconPath}/>
+                <button class="editButton editNote">
+                  <img data-index="${index}" src=${editIconPath}/>
                 </button>
-                <button class="editButton">
-                  <img id="archiveNote" data-index="${index}" src=${archiveIconPath}/>
+                <button class="editButton archiveNote">
+                  <img data-index="${index}" src=${archiveIconPath}/>
                 </button>
-                <button class="editButton">
-                  <img id="removeNote" data-index="${index}" src=${deleteIconPath}/>
+                <button class="editButton removeNote">
+                  <img data-index="${index}" src=${deleteIconPath}/>
                 </button>
               </div>
             </td>

@@ -1,4 +1,4 @@
-export const data = [
+const data = [
   {
     name: "Shoping list",
     created: new Date(2021, 3, 20),
@@ -17,12 +17,8 @@ export const data = [
     name: "New Feature",
     created: new Date(2021, 4, 5),
     category: "Idea",
-    content: "Implement new feature",
+    content: "Implement new feature from 5/5/2021 to 3/5/2021",
     archived: false,
-    dates: [
-      new Date(2021, 4, 5),
-      new Date(2021, 4, 3),
-    ]
   },
   {
     name: "Free Guy",
@@ -49,7 +45,7 @@ export const data = [
     name: "Pass the test tasks",
     created: new Date(2021, 4, 10),
     category: "Task",
-    content: "Need to do all tasks",
+    content: "Need to do all tasks to 10/10/2021",
     archived: true
   },
 ]
@@ -70,4 +66,24 @@ export const archiveIconPath = "https://img.icons8.com/pastel-glyph/20/000000/ar
 export const deleteIconPath = "https://img.icons8.com/ios-glyphs/20/000000/trash--v1.png";
 export const restoreIconPath = "https://img.icons8.com/ios/20/000000/restore-page.png";
 export const createdFormat = { month: 'long', day: 'numeric', year: 'numeric' };
-export const datesFormat = { day: 'numeric', month: 'numeric', year: 'numeric' };
+
+export const pathToRegex = path => new RegExp("^" + path.replace(/\//g, "\\/").replace(/:\w+/g, "(.+)") + "$");
+
+export const getParams = match => {
+  const values = match.result.slice(1);
+  const keys = Array.from(match.route.path.matchAll(/:(\w+)/g)).map(result => result[1]);
+
+  return Object.fromEntries(keys.map((key, i) => {
+    return [key, values[i]];
+  }));
+}
+
+export const getInitData = () => {
+  var localData = JSON.parse(localStorage.getItem("data"));
+
+  if (!localData) {
+    localStorage.setItem("data", JSON.stringify(data));
+    return data;
+  }
+  return localData;
+}
